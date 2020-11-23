@@ -1,6 +1,7 @@
 import React from "react";
 import gql from "graphql-tag";
 import { Query } from "react-apollo";
+import Loading from "../Loading";
 
 const GET_CURRENT_USER = gql`
   {
@@ -15,7 +16,7 @@ const Profile = () => (
   <Query query={GET_CURRENT_USER}>
     {({ data, loading }) => {
       if (loading || !data.viewer) {
-        return <div>Loading ... </div>;
+        return <Loading />;
       }
       const { viewer } = data;
 
