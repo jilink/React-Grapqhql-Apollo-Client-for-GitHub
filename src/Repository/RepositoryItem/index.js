@@ -17,7 +17,7 @@ const RepositoryItem = ({
       <h2>
         <Link href={url}>{name}</Link>
       </h2>
-      <div classname="RepositoryItem-title-action">
+      <div className="RepositoryItem-title-action">
         {stargazers.totalCount} Stars
       </div>
     </div>
