@@ -29,12 +29,15 @@ const GET_REPOSITORIES_OF_CURRENT_USER = gql`
 `;
 
 const Profile = () => (
-  <Query query={GET_REPOSITORIES_OF_CURRENT_USER}>
+  <Query
+    query={GET_REPOSITORIES_OF_CURRENT_USER}
+    notifyOnNetworkStatusChange={true}
+  >
     {({ data, loading, error, fetchMore }) => {
       if (error) {
         return <ErrorMessage error={error} />;
       }
-      if (loading || !data.viewer) {
+      if (loading && !data) {
         return <Loading />;
       }
       const { viewer } = data;
@@ -43,6 +46,7 @@ const Profile = () => (
         <RepositoryList
           repositories={viewer.repositories}
           fetchMore={fetchMore}
+          loading={loading}
         />
       );
     }}
