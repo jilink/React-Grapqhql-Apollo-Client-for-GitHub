@@ -4,6 +4,8 @@ import * as routes from "../../constants/route";
 import Button from "../../Button";
 import Input from "../../Input";
 
+import "./style.css";
+
 class OrganizationSearch extends React.Component {
   state = {
     value: this.props.organizationName,
@@ -52,10 +54,18 @@ class Navigation extends React.Component {
     } = this.props;
     return (
       <header className="Navigation">
-        <div className="Navigation-link">
+        <div
+          className={`Navigation-link ${
+            pathname === routes.PROFILE ? "active" : ""
+          }`}
+        >
           <Link to={routes.PROFILE}>Profile</Link>
         </div>
-        <div className="Navigation-link">
+        <div
+          className={`Navigation-link ${
+            pathname === routes.ORGANIZATION ? "active" : ""
+          }`}
+        >
           <Link to={routes.ORGANIZATION}>Organization</Link>
         </div>
         {pathname === routes.ORGANIZATION && (
