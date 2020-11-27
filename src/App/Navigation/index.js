@@ -41,42 +41,35 @@ class OrganizationSearch extends React.Component {
   }
 }
 
-class Navigation extends React.Component {
-  state = { organizationName: "the-road-to-react" };
-
-  onOrganizationSearch = (value) => {
-    this.setState({ organizationName: value });
-  };
-
-  render() {
-    const {
-      location: { pathname },
-    } = this.props;
-    return (
-      <header className="Navigation">
-        <div
-          className={`Navigation-link ${
-            pathname === routes.PROFILE ? "active" : ""
-          }`}
-        >
-          <Link to={routes.PROFILE}>Profile</Link>
-        </div>
-        <div
-          className={`Navigation-link ${
-            pathname === routes.ORGANIZATION ? "active" : ""
-          }`}
-        >
-          <Link to={routes.ORGANIZATION}>Organization</Link>
-        </div>
-        {pathname === routes.ORGANIZATION && (
-          <OrganizationSearch
-            organizationName={this.state.organizationName}
-            onOrganizationSearch={this.onOrganizationSearch}
-          />
-        )}
-      </header>
-    );
-  }
-}
+const Navigation = ({
+  location: { pathname },
+  organizationName,
+  onOrganizationSearch,
+}) => {
+  return (
+    <header className="Navigation">
+      <div
+        className={`Navigation-link ${
+          pathname === routes.PROFILE ? "active" : ""
+        }`}
+      >
+        <Link to={routes.PROFILE}>Profile</Link>
+      </div>
+      <div
+        className={`Navigation-link ${
+          pathname === routes.ORGANIZATION ? "active" : ""
+        }`}
+      >
+        <Link to={routes.ORGANIZATION}>Organization</Link>
+      </div>
+      {pathname === routes.ORGANIZATION && (
+        <OrganizationSearch
+          organizationName={organizationName}
+          onOrganizationSearch={onOrganizationSearch}
+        />
+      )}
+    </header>
+  );
+};
 
 export default withRouter(Navigation);
