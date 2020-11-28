@@ -1,5 +1,5 @@
 import React from "react";
-import { Query } from "react-apollo";
+import { Query, ApolloConsumer } from "react-apollo";
 import gql from "graphql-tag";
 import { withState } from "recompose";
 import FetchMore from "../../FetchMore";
@@ -85,11 +85,12 @@ const Issues = ({
 }) => {
   return (
     <div className="Issues">
-      <ButtonUnobtrusive
-        onClick={() => onChangeIssueState(TRANSITION_STATE[issueState])}
-      >
-        {TRANSITION_LABEL[issueState]}
-      </ButtonUnobtrusive>
+      <IssuesFilter
+        issueState={issueState}
+        onChangeIssueState={onChangeIssueState}
+        repositoryOwner={repositoryOwner}
+        repositoryName={repositoryName}
+      />
       {isShow(issueState) && (
         <Query
           query={GET_ISSUES_OF_REPOSITORY}
@@ -131,6 +132,46 @@ const IssueList = ({ issues, fetchMore }) => (
       fetchMore={fetchMore}
     />
   </div>
+);
+
+const prefetchIssues = (
+  client,
+  repositoryOwner,
+  repositoryName,
+  issueState
+) => {
+  const nextIssuesState = TRANSITION_STATE[issueState];
+
+  if (isShow(nextIssuesState)) {
+    client.query({
+      query: GET_ISSUES_OF_REPOSITORY,
+      variables: {
+        repositoryOwner,
+        repositoryName,
+        issueState: nextIssuesState,
+      },
+    });
+  }
+};
+
+const IssuesFilter = ({
+  issueState,
+  onChangeIssueState,
+  repositoryName,
+  repositoryOwner,
+}) => (
+  <ApolloConsumer>
+    {(client) => (
+      <ButtonUnobtrusive
+        onClick={() => onChangeIssueState(TRANSITION_STATE[issueState])}
+        onMouseOver={() =>
+          prefetchIssues(client, repositoryOwner, repositoryName, issueState)
+        }
+      >
+        {TRANSITION_LABEL[issueState]}
+      </ButtonUnobtrusive>
+    )}
+  </ApolloConsumer>
 );
 
 export default withState(
