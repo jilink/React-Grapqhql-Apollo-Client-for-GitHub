@@ -1,6 +1,7 @@
 import React from "react";
 import { Query } from "react-apollo";
 import gql from "graphql-tag";
+import { withState } from "recompose";
 
 import IssueItem from "../IssueItem";
 import Loading from "../../Loading";
@@ -8,9 +9,13 @@ import ErrorMessage from "../../Error";
 import { ButtonUnobtrusive } from "../../Button";
 
 const GET_ISSUES_OF_REPOSITORY = gql`
-  query($repositoryName: String!, $repositoryOwner: String!) {
+  query(
+    $repositoryName: String!
+    $repositoryOwner: String!
+    $issueState: IssueState!
+  ) {
     repository(name: $repositoryName, owner: $repositoryOwner) {
-      issues(first: 5) {
+      issues(first: 5, states: [$issueState]) {
         edges {
           node {
             id
@@ -45,13 +50,12 @@ const TRANSITION_STATE = {
 
 const isShow = (issueState) => issueState !== ISSUE_STATES.NONE;
 
-const Issues = ({ repositoryOwner, repositoryName }) => {
-  const [issueState, setIsssueState] = React.useState(ISSUE_STATES.NONE);
-
-  const onChangeIssueState = (nextIssueState) => {
-    setIsssueState(nextIssueState);
-  };
-
+const Issues = ({
+  repositoryOwner,
+  repositoryName,
+  issueState,
+  onChangeIssueState,
+}) => {
   return (
     <div className="Issues">
       <ButtonUnobtrusive
@@ -62,7 +66,7 @@ const Issues = ({ repositoryOwner, repositoryName }) => {
       {isShow(issueState) && (
         <Query
           query={GET_ISSUES_OF_REPOSITORY}
-          variables={{ repositoryName, repositoryOwner }}
+          variables={{ repositoryName, repositoryOwner, issueState }}
         >
           {({ data, loading, error }) => {
             if (error) {
@@ -102,4 +106,8 @@ const IssueList = ({ issues }) => (
   </div>
 );
 
-export default Issues;
+export default withState(
+  "issueState",
+  "onChangeIssueState",
+  ISSUE_STATES.NONE
+)(Issues);
